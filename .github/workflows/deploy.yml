@@ -36,7 +36,10 @@ jobs:
           echo "VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}"
 
       - name: Pull Vercel environment variables
-        run: vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+        run: |
+          mkdir -p .vercel
+          echo '{"projectId":"'"$VERCEL_PROJECT_ID"'","orgId":"'"$VERCEL_ORG_ID"'"}' > .vercel/project.json
+          vercel pull --yes --environment=production --token=$VERCEL_TOKEN
 
       - name: Set environment variables on Vercel
         run: |
