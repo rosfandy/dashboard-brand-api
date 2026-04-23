@@ -11,7 +11,6 @@ export const GetProducts = async (req: Request, res: Response): Promise<void> =>
             res.status(400).json({ message: "Invalid categoryId" })
             return
         }
-
         const products = await service.GetProducts(categoryId)
         res.json({ data: products })
     } catch (error) {
