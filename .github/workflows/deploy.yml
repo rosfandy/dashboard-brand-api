@@ -29,11 +29,20 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Debug secrets
+      - name: Debug secrets (safe)
         run: |
-          echo "VERCEL_TOKEN is set: ${{ secrets.VERCEL_TOKEN != '' }}"
-          echo "VERCEL_ORG_ID is set: ${{ secrets.VERCEL_ORG_ID != '' }}"
-          echo "VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}"
+          echo "=== CHECK SECRET EXISTENCE ==="
+          [ -z "$VERCEL_TOKEN" ] && echo "VERCEL_TOKEN: EMPTY" || echo "VERCEL_TOKEN: OK"
+          [ -z "$VERCEL_ORG_ID" ] && echo "VERCEL_ORG_ID: EMPTY" || echo "VERCEL_ORG_ID: OK"
+          [ -z "$VERCEL_PROJECT_ID" ] && echo "VERCEL_PROJECT_ID: EMPTY" || echo "VERCEL_PROJECT_ID: OK"
+
+          echo ""
+          echo "=== CHECK TOKEN FORMAT ==="
+          echo "$VERCEL_TOKEN" | grep -q "^vercel_" && echo "TOKEN FORMAT: VALID" || echo "TOKEN FORMAT: INVALID"
+
+          echo ""
+          echo "=== CHECK FOR DANGEROUS CHAR ==="
+          echo "$VERCEL_TOKEN" | grep -q "\$" && echo "TOKEN CONTAINS \$ (BAD)" || echo "TOKEN CLEAN"
 
       - name: Pull Vercel environment variables
         run: |
